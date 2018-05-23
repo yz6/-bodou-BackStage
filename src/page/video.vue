@@ -9,7 +9,7 @@
                             <div style="float: right;padding: 0px 10px 0 0;display: flex;margin-bottom: 20px;width: 350px">
                                 <el-input
                                     placeholder="主播名"
-                                    v-model="zbName">
+                                cnpm run dev    v-model="zbName">
                                 </el-input>
                                 <el-button  class="el-icon-search" style="width: 60px"></el-button>
                                 <el-button @click="goAddPage" class="addWz" style="margin: 0 15px;width: 180px;" type="primary" >&nbsp; 新建视频 &nbsp;</el-button>
@@ -32,6 +32,11 @@
                                     <el-table-column
                                         prop="name"
                                         label="关联主播"
+                                        width="100">
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="videoType"
+                                        label="类别"
                                         width="100">
                                     </el-table-column>
                                     <el-table-column
@@ -144,6 +149,21 @@
 
                                         </div>
 
+                                    </div>
+                                    <div>
+                                        <div style="width: 60px;">
+                                            <p>类别</p>
+                                        </div>
+                                        <div style="margin-left: 20px;width: 400px;">
+                                            <el-select v-model="videoType" placeholder="请选择">
+                                                <el-option
+                                                    v-for="item in videoTypeOptions"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                                </el-option>
+                                            </el-select>
+                                        </div>
                                     </div>
                                     <div>
                                         <div style="width: 60px;">
@@ -285,6 +305,7 @@
         name: "video",
         data() {
             return {
+                videoType:"",
                 dynamicTags: [],
                 inputVisible: false,
                 inputValue: '',
@@ -309,6 +330,13 @@
                 editorOption: {
 
                 },
+                videoTypeOptions:[{
+                   value:"1",
+                   label:"吃鸡"
+                },{
+                    value:"2",
+                    label:"王者荣耀"
+                }],
                 dateOption:[{
                     value:"2018-05-21"
                 },{
@@ -384,6 +412,7 @@
                 value: '',
                 input:"",
                 tableData: [{
+                    videoType:"王者荣耀",
                     date: '2016-05-02',
                     name: '骚白',
                     state:"已发布",
@@ -392,6 +421,7 @@
                         title:"骚白两亿身价空降斗鱼",
                     }
                 }, {
+                    videoType:"英雄联盟",
                     date: '2016-05-04',
                     name: '德云色',
                     state:"已发布",
@@ -400,6 +430,7 @@
                         title:"笑笑西卡谈S8决赛:'中国队最有希望的一年'",
                     }
                 }, {
+                    videoType:"王者荣耀",
                     date: '2016-05-01',
                     name: '张大仙',
                     state:"已发布",
@@ -408,6 +439,7 @@
                         title:"指法芬芳张大仙",
                     }
                 }, {
+                    videoType:"英雄联盟",
                     date: '2016-05-03',
                     name: '冯提莫',
                     state:"已发布",
