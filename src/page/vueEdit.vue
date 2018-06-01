@@ -69,18 +69,33 @@
                </el-pagination>
            </div>
        </div>
-       <div v-if="!listPage">
+       <div v-show="!listPage">
            <div class="addPage">
                <div class="EditPage">
 
                    <h4 class="content-title"> <el-button @click="goListPage" class="el-icon-arrow-left">列表</el-button></h4>
                    <div class="edit_container">
-                       <quill-editor v-model="content"
-                                     ref="myQuillEditor"
-                                     class="editer"
-                                     :options="editorOption"
-                                     @ready="onEditorReady($event)">
-                       </quill-editor>
+                       <!--<quill-editor v-model="content"-->
+                                     <!--ref="myQuillEditor"-->
+                                     <!--class="editer"-->
+                                     <!--:options="editorOption"-->
+                                     <!--@ready="onEditorReady($event)">-->
+                       <!--</quill-editor>-->
+                       <div v-show="dialogVisible==false" id="editorElem" style="text-align:left;z-index: -20;list-style: aliceblue"></div>
+                   </div>
+                   <div class="EditDialog">
+                       <el-dialog
+                           append-to-body="true"
+                           close-on-click-modal="false"
+                           title="移动端预览"
+                           style="margin: 0 auto;width: 750px"
+                           :visible.sync="dialogVisible">
+                           <div class="ql-editor" v-html='editorContent'></div>
+                           <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+                       </el-dialog>
                    </div>
                    <div class="uploadBg">
                        <div>
@@ -134,10 +149,12 @@
     import headTop from '../components/headTop'
     import { quillEditor } from 'vue-quill-editor'
     import {baseUrl, baseImgPath} from '@/config/env'
-
+    import E from '../../static/wangEditor.js'
     export default {
         data(){
             return {
+                dialogVisible: false,
+                editorContent: '',
                 anchorOption:"",
                 currentPage:1,
                 zbName:"",
@@ -217,6 +234,9 @@
         },
 
         methods: {
+            getContent: function () {
+                console.log(this.editorContent)
+            },
             //分页事件
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
@@ -244,11 +264,11 @@
 		        console.log('editor ready!', editor)
 		    },
 		    submit(){
-                var htFwb = this.content
+                var htFwb = this.editorContent
                 htFwb =  htFwb.replace(/\iframe/g, "video")
                 console.log(htFwb)
-                this.content = htFwb
-                console.log(this.content);
+                this.editorContent = htFwb
+                console.log(this.editorContent);
 
                 this.$message.success('提交成功！');
             },
@@ -259,9 +279,11 @@
                 this.listPage =true
             },
             mobilePreview(){
-                this.$alert(this.content, '移动端预览', {
-                    dangerouslyUseHTMLString: true
-                });
+                var htFwb = this.editorContent
+                htFwb =  htFwb.replace(/\iframe/g, "video")
+                this.dialogVisible = true
+                this.editorContent = htFwb
+                console.log(this.editorContent)
             },
             querySearch(queryString, cb) {
                 var restaurants = this.restaurants;
@@ -301,6 +323,12 @@
         },
 
         mounted() {
+            var editor = new E('#editorElem')
+            editor.customConfig.onchange = (html) => {
+                this.editorContent = html
+            }
+            editor.customConfig.uploadImgShowBase64 = true
+            editor.create()
             this.restaurants = this.loadAll();
         }
     }
@@ -310,10 +338,9 @@
 	@import '../style/mixin';
 	.edit_container{
 		padding: 20px;
-		margin-bottom: 60px;
 	}
 	.editer{
-		height: 400px;
+		height: 300px;
 	}
 	.submit_btn{
         margin-bottom: 10px;
@@ -441,7 +468,11 @@
               }
           }
         }
-
+.EditDialog{
+    .v-modal{
+        opacity: 0;
+    }
+}
 
 </style>
 <style scoped>
